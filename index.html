@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guardião dos Biomas</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial, sans-serif;
+    background:linear-gradient(135deg,#6ecf7f,#dff5e1);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    animation:fade 1s;
+}
+
+#jogo{
+    background:white;
+    width:100%;
+    max-width:700px;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    text-align:center;
+    animation:subir .6s;
+}
+
+h1{
+    color:#2e7d32;
+    margin-bottom:15px;
+}
+
+#info{
+    font-size:22px;
+    margin-bottom:20px;
+}
+
+#pergunta{
+    margin-bottom:20px;
+}
+
+button{
+    width:100%;
+    margin:10px 0;
+    padding:15px;
+    border:none;
+    border-radius:12px;
+    background:#4caf50;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.inicio{
+    animation:subir 1s;
+}
+
+.trofeu{
+    font-size:80px;
+    animation:pular 1s infinite;
+}
+
+.triste{
+    font-size:80px;
+}
+
+@keyframes fade{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+@keyframes subir{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes pular{
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="jogo"></div>
+
+<script>
+
+let pontos = 0;
+let vidas = 3;
+let atual = 0;
+
+const perguntas = [
+
+{
+pergunta:"Qual grupo vegetal não possui vasos condutores?",
+opcoes:["Angiospermas","Gimnospermas","Briófitas","Pteridófitas"],
+correta:2
+},
+
+{
+pergunta:"Qual grupo vegetal possui sementes em pinhas?",
+opcoes:["Briófitas","Pteridófitas","Gimnospermas","Algas"],
+correta:2
+},
+
+{
+pergunta:"Qual grupo vegetal produz flores e frutos?",
+opcoes:["Briófitas","Pteridófitas","Gimnospermas","Angiospermas"],
+correta:3
+},
+
+{
+pergunta:"As samambaias pertencem a qual grupo?",
+opcoes:["Pteridófitas","Angiospermas","Gimnospermas","Briófitas"],
+correta:0
+},
+
+{
+pergunta:"Qual vegetação ajuda a proteger o litoral?",
+opcoes:["Manguezal","Tundra","Taiga","Deserto"],
+correta:0
+},
+
+{
+pergunta:"As briófitas dependem da água para reprodução?",
+opcoes:["Sim","Não"],
+correta:0
+},
+
+{
+pergunta:"Qual destes é uma gimnosperma?",
+opcoes:["Pinheiro","Roseira","Musgo","Samambaia"],
+correta:0
+},
+
+{
+pergunta:"Os manguezais são importantes porque:",
+opcoes:[
+"Protegem a costa",
+"Produzem neve",
+"Criam desertos",
+"Secam rios"
+],
+correta:0
+}
+
+];
+
+function telaInicial(){
+
+document.getElementById("jogo").innerHTML=`
+
+<div class="inicio">
+
+<h1>🌱 Guardião dos Biomas 🌱</h1>
+
+<p style="margin:20px 0;">
+Teste seus conhecimentos sobre plantas e biomas.
+</p>
+
+<button onclick="iniciarJogo()">
+▶ Iniciar Jogo
+</button>
+
+</div>
+
+`;
+
+}
+
+function iniciarJogo(){
+carregarPergunta();
+}
+
+function carregarPergunta(){
+
+if(vidas <= 0){
+fim(false);
+return;
+}
+
+if(atual >= perguntas.length){
+fim(true);
+return;
+}
+
+let p = perguntas[atual];
+
+document.getElementById("jogo").innerHTML=`
+
+<h1>🌿 Guardião dos Biomas</h1>
+
+<div id="info">
+❤️ ${vidas} | 🏆 ${pontos}
+</div>
+
+<h2 id="pergunta">
+${p.pergunta}
+</h2>
+
+<div id="alternativas"></div>
+
+`;
+
+const area = document.getElementById("alternativas");
+
+p.opcoes.forEach((opcao,indice)=>{
+
+let botao = document.createElement("button");
+
+botao.innerText = opcao;
+
+botao.onclick = () => {
+
+if(indice === p.correta){
+pontos += 10;
+}else{
+vidas--;
+}
+
+atual++;
+carregarPergunta();
+
+};
+
+area.appendChild(botao);
+
+});
+
+}
+
+function fim(vitoria){
+
+if(vitoria){
+
+document.getElementById("jogo").innerHTML=`
+
+<div style="animation:subir 1s">
+
+<div class="trofeu">🏆</div>
+
+<h1>PARABÉNS!</h1>
+
+<h2>
+Você venceu o desafio dos biomas!
+</h2>
+
+<p style="margin:20px 0;">
+Pontuação final: <b>${pontos}</b>
+</p>
+
+<p style="margin-bottom:20px;">
+Você domina os grupos vegetais e os biomas brasileiros.
+</p>
+
+<button onclick="location.reload()">
+🔄 Jogar Novamente
+</button>
+
+</div>
+
+`;
+
+}else{
+
+document.getElementById("jogo").innerHTML=`
+
+<div style="animation:subir 1s">
+
+<div class="triste">😢</div>
+
+<h1 style="color:#d32f2f;">
+TENTE NOVAMENTE
+</h1>
+
+<h2>
+Os biomas precisam de mais um guardião!
+</h2>
+
+<p style="margin:20px 0;">
+Pontuação final: <b>${pontos}</b>
+</p>
+
+<p style="margin-bottom:20px;">
+Revise os grupos vegetais e tente outra vez.
+</p>
+
+<button onclick="location.reload()">
+🔄 Tentar Novamente
+</button>
+
+</div>
+
+`;
+
+}
+
+}
+
+telaInicial();
+
+</script>
+
+</body>
+</html>
